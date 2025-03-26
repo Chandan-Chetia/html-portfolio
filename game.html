@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Falling Object</title>
+    <h2>This game is for you as a gift from Chandan</h2>
+    <style>
+        body {
+            text-align: center;
+            overflow: hidden;
+        }
+        canvas {
+            background: lightblue;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Catch the Falling Object Game</h1>
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let basket = { x: 175, y: 450, width: 50, height: 10 };
+        let object = { x: Math.random() * 350, y: 0, radius: 10, speed: 4 };
+        let score = 0;
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "ArrowLeft" && basket.x > 0) {
+                basket.x -= 20;
+            } else if (event.key === "ArrowRight" && basket.x < canvas.width - basket.width) {
+                basket.x += 20;
+            }
+        });
+
+        function update() {
+            object.y += object.speed;
+            
+            if (object.y > canvas.height) {
+                object.x = Math.random() * 350;
+                object.y = 0;
+            }
+
+            if (
+                object.y + object.radius >= basket.y &&
+                object.x >= basket.x &&
+                object.x <= basket.x + basket.width
+            ) {
+                score++;
+                object.x = Math.random() * 350;
+                object.y = 0;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.arc(object.x, object.y, object.radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = "black";
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+            
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 10, 20);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
